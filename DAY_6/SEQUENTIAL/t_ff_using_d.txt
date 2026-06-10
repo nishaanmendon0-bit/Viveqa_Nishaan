@@ -1,0 +1,49 @@
+module d_ff(D, clk, rst, Q);
+    input D, clk, rst;
+    output reg Q;
+
+    always @(posedge clk or posedge rst) begin
+        if (rst) begin
+            Q <= 1'b0;
+        end else begin
+            Q <= D;
+        end
+    end
+endmodule
+
+module t_ff_using_d(T, clk, rst, Q, Qbar);
+    input T, clk, rst;
+    output Q, Qbar;
+
+    wire d_in;
+
+    assign d_in = T ^ Q;
+    assign Qbar = ~Q;
+
+    d_ff d1(d_in, clk, rst, Q);
+
+endmodule
+
+Testbench code:
+
+module t_ff_using_d_tb();
+    reg T, clk, rst;
+    wire Q, Qbar;
+
+    t_ff_using_d dut(T, clk, rst, Q, Qbar);
+
+    always #5 clk = ~clk;
+
+    initial begin
+        clk = 0;
+        T = 0;
+        rst = 1;
+        #10 rst = 0;
+        #10 T = 1;
+        #20 T = 0;
+        #10 T = 1;
+        #10 T = 0;
+        #10 $finish;
+    end
+
+endmodule
