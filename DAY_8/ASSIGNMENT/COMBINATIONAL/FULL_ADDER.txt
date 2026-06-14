@@ -1,0 +1,30 @@
+module full_adder_df(A, B, Cin, Sum, Cout);
+    input A, B, Cin;
+    output Sum, Cout;
+
+    assign Sum = A ^ B ^ Cin;
+    assign Cout = (A & B) | (B & Cin) | (A & Cin);
+
+endmodule
+
+
+Testbench code:
+
+module full_adder_df_tb();
+reg A, B, Cin;
+wire Sum, Cout;
+
+full_adder_df dut(A, B, Cin, Sum, Cout);
+initial begin
+   
+ A=1'b0; B=1'b0; Cin=1'b0;
+ #5 A=1'b0; B=1'b0; Cin=1'b1;
+ #5 A=1'b0; B=1'b1; Cin=1'b0;
+ #5 A=1'b0; B=1'b1; Cin=1'b1;
+ #5 A=1'b1; B=1'b0; Cin=1'b0;
+ #5 A=1'b1; B=1'b0; Cin=1'b1;
+ #5 A=1'b1; B=1'b1; Cin=1'b0;
+ #5 A=1'b1; B=1'b1; Cin=1'b1;
+ #5 $finish;
+    end
+endmodule

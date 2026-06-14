@@ -1,0 +1,51 @@
+module mod12_counter_sync_load(clk, rst, load, data_in, count);
+    input clk;
+    input rst;
+    input load;
+    input [3:0] data_in;
+    output reg [3:0] count;
+
+    always @(posedge clk or posedge rst) begin
+        if (rst) begin
+            count <= 4'b0000;
+        end else if (load) begin
+            count <= data_in;
+        end else begin
+            if (count == 4'd11) begin
+                count <= 4'b0000; 
+            end else begin
+                count <= count + 1'b1;
+            end
+        end
+    end
+
+endmodule
+
+Testbench code:
+
+module mod12_counter_sync_load_tb();
+    reg clk;
+    reg rst;
+    reg load;
+    reg [3:0] data_in;
+    wire [3:0] count;
+
+    mod12_counter_sync_load dut(clk, rst, load, data_in, count);
+
+    always #5 clk = ~clk;
+
+    initial begin
+        clk = 0;
+        rst = 1;
+        load = 0;
+        data_in = 4'b0000;
+        #10 rst = 0;
+        #140; 
+        load = 1;
+        data_in = 4'd9;
+        #10 load = 0;
+        #60; 
+        #10 $finish;
+    end
+
+endmodule

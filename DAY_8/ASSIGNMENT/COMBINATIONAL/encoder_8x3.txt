@@ -1,0 +1,56 @@
+module encoder_8x3_struc(D, Y, Valid);
+    input [7:0] D;
+    output [2:0] Y;
+    output Valid;
+
+    wire n_D6, n_D5, n_D4, n_D2;
+    wire w1, w2, w3, w4, w5;
+
+    not (n_D6, D[6]);
+    not (n_D5, D[5]);
+    not (n_D4, D[4]);
+    not (n_D2, D[2]);
+
+    or (Y[2], D[7], D[6], D[5], D[4]);
+
+    and (w1, n_D5, n_D4, D[3]);
+    and (w2, n_D5, n_D4, D[2]);
+    or (Y[1], D[7], D[6], w1, w2);
+
+    and (w3, n_D6, D[5]);
+    and (w4, n_D6, n_D4, D[3]);
+    and (w5, n_D6, n_D4, n_D2, D[1]);
+    or (Y[0], D[7], w3, w4, w5);
+
+    or (Valid, D[7], D[6], D[5], D[4], D[3], D[2], D[1], D[0]);
+
+endmodule
+
+
+Testbench code:
+
+module encoder_8x3_struc_tb();
+    reg [7:0] D;
+    wire [2:0] Y;
+    wire Valid;
+
+    encoder_8x3_struc dut(D, Y, Valid);
+
+    initial begin
+        D = 8'b00000000; 
+        
+        #5 D = 8'b10000000; 
+        
+        #5 D = 8'b01010101; 
+        
+        #5 D = 8'b00100000; 
+        #5 D = 8'b00011111; 
+        #5 D = 8'b00001000; 
+        #5 D = 8'b00000100; 
+        #5 D = 8'b00000010; 
+        #5 D = 8'b00000001; 
+        
+        #5 $finish;
+    end
+
+endmodule
