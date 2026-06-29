@@ -1,0 +1,46 @@
+module mux_2x1(D0, D1, S, Y);
+    input D0, D1, S;
+    output Y;
+
+    assign Y = (~S & D0) | (S & D1);
+endmodule
+
+module mux_4x1_struc(D, S, Y);
+    input [3:0] D;   
+    input [1:0] S;   
+    output Y;       
+    wire w0, w1;
+    mux_2x1 mux0 (D[0], D[1], S[0], w0);
+    mux_2x1 mux1 (D[2], D[3], S[0], w1);
+    mux_2x1 mux2 (w0, w1, S[1], Y);
+endmodule
+
+Testbench code:
+
+module mux_4x1_struc_tb();
+    reg [3:0] D;
+    reg [1:0] S;
+    wire Y;
+
+    mux_4x1_struc dut(D, S, Y);
+
+    initial begin
+       
+        D = 4'b1010; 
+        
+        S = 2'b00;        
+        #5 S = 2'b01;    
+        #5 S = 2'b10;    
+        #5 S = 2'b11;    
+        
+        #5 D = 4'b1100;
+        
+        #5 S = 2'b00;    
+        #5 S = 2'b01;    
+        #5 S = 2'b10;    
+        #5 S = 2'b11;    
+        
+        #5 $finish;
+    end
+
+endmodule
